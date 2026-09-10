@@ -82,9 +82,8 @@
                 <div class="station-toolbar"><strong>12 stations nearby</strong><button>Filter</button></div>
                 <div class="brand-filters"><span class="selected">All brands</span><span>Shell</span><span>SP Group</span><span>Tesla</span></div>
                 <div class="station-list">
-                  <button class="station-item" data-go="scan"><span class="station-brand shell">SHELL</span><span class="station-info"><strong>Marina Bay • Port 04</strong><small>120 kW · CCS2 · 0.65/kWh</small></span><span class="station-state">Available</span></button>
-                  <button class="station-item"><span class="station-brand sp">SP</span><span class="station-info"><strong>Marina Boulevard</strong><small>150 kW · CCS2 · 0.58/kWh</small></span><span class="station-state">3 open</span></button>
-                  <button class="station-item"><span class="station-brand tesla">T</span><span class="station-info"><strong>Orchard Central</strong><small>250 kW · Tesla · 0.72/kWh</small></span><span class="station-state">Available</span></button>
+                  <div class="station-item unavailable"><span class="station-brand sp">SP</span><span class="station-info"><strong>Marina Boulevard</strong><small>150 kW · CCS2 · 0.58/kWh</small></span><span class="station-state">Unavailable</span></div>
+                  <button class="station-item available" data-go="scan"><span class="station-brand shell">SHELL</span><span class="station-info"><strong>Marina Bay • Port 04</strong><small>120 kW · CCS2 · 0.65/kWh</small></span><span class="station-state">Available</span></button>
                 </div>
               </div>
             </div>
@@ -94,7 +93,7 @@
               <div class="phone-status"><span>14:34</span><span>5G ◼︎ 82%</span></div>
               <div class="mobile-head">
                 <div class="row">
-                  <button class="back-btn">←</button>
+                  <button class="back-btn" data-go="stations">←</button>
                   <h2 style="flex:1">Confirm charger</h2>
                   <button class="support-small" data-go="chat">Help</button>
                 </div>
@@ -204,6 +203,32 @@
 
                 <button class="action-btn" id="simulateIssueBtn" style="background:linear-gradient(135deg,#9f5a0b,#d28a27)">Simulate charging issue</button>
                 <button class="secondary-btn" id="stopSessionBtn">Stop charging</button>
+              </div>
+            </div>
+
+            <!-- SESSION SUMMARY -->
+            <div class="screen hidden" id="summaryScreen">
+              <div class="phone-status"><span>14:58</span><span>5G ◼︎ 75%</span></div>
+              <div class="mobile-head">
+                <div class="row">
+                  <button class="back-btn" data-go="charging">←</button>
+                  <h2 style="flex:1">Session complete</h2>
+                  <span class="badge ok">Complete</span>
+                </div>
+              </div>
+              <div class="mobile-content summary-content">
+                <div class="summary-success"><div>✓</div><strong>Charging stopped safely</strong><span>Your final session record is ready.</span></div>
+                <div class="summary-card">
+                  <div class="summary-operator"><span class="station-brand shell">SHELL</span><div><strong>Shell Recharge</strong><small>Marina Bay • Port 04</small></div></div>
+                  <div class="summary-total"><span>Total charging cost</span><strong>$12.29</strong></div>
+                  <div class="summary-line"><span>Energy delivered</span><strong>18.9 kWh</strong></div>
+                  <div class="summary-line"><span>Charging duration</span><strong>31 min</strong></div>
+                  <div class="summary-line"><span>Tariff</span><strong>$0.65 / kWh</strong></div>
+                  <div class="summary-line"><span>Payment method</span><strong>Visa •••• 4242</strong></div>
+                </div>
+                <div class="receipt-note"><strong>Payment authorised</strong><span>Your final amount will be confirmed by Shell Recharge. Session ID: FLOW-DEMO-4381</span></div>
+                <button class="action-btn" data-go="stations">Find another charger</button>
+                <button class="secondary-btn" data-go="chat">Contact support</button>
               </div>
             </div>
 

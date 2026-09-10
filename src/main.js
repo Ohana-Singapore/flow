@@ -8,7 +8,7 @@ const SELECTORS = {
 const IDS = {
   operatorWorkspace: 'operatorPanel',
   driverWorkspace: 'driverWorkspace',
-  screens: { stations: 'stationsScreen', scan: 'scanScreen', charging: 'chargingScreen', chat: 'chatScreen', call: 'callScreen' },
+  screens: { stations: 'stationsScreen', scan: 'scanScreen', charging: 'chargingScreen', summary: 'summaryScreen', chat: 'chatScreen', call: 'callScreen' },
   controls: { startCharging: 'startChargingBtn', simulateIssue: 'simulateIssueBtn', stopSession: 'stopSessionBtn', sendChat: 'sendChat', chatInput: 'chatInput' },
   charging: { issueBanner: 'issueBanner', liveStatus: 'liveStatus', chargeBadge: 'chargeBadge', energy: 'energyValue', cost: 'costValue', battery: 'batteryLevel', duration: 'timeValue', messages: 'messages' },
 };
@@ -135,7 +135,7 @@ function bindEvents() {
   elements.controls.simulateIssue.addEventListener('click', () => { showIssueState(); setActiveNavigation('issue'); });
   elements.controls.stopSession.addEventListener('click', () => {
     clearInterval(state.chargingTimer);
-    alert('Demo: charging session stopped and final session record requested from the operator.');
+    showScreen('summary');
   });
   elements.controls.sendChat.addEventListener('click', sendChatMessage);
   elements.controls.chatInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') sendChatMessage(); });
