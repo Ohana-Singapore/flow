@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow — Charging support, beautifully connected</title>
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="topbar">
+    <div class="topbar-brand"><div class="brandmark">F</div><div><strong>Flow</strong><span>Charging, without the friction.</span></div></div>
+  </div>
+
+  <main class="main">
+    <div class="interface-tabs" role="tablist" aria-label="Choose interface">
+      <button class="interface-tab active" data-interface="driver">Driver interface</button>
+      <button class="interface-tab" data-interface="operator">Operator interface</button>
+    </div>
+
+    <section class="interface-workspace" id="operatorPanel">
+      <div class="operator-dashboard">
+        <div class="operator-hero-card">
+          <h2>Operator control centre</h2>
+          <p>Monitor charging sessions and resolve escalations shared by Flow with the right session context attached.</p>
+        </div>
+        <div class="operator-kpis">
+          <div class="operator-kpi"><span>Live sessions</span><strong>184</strong><em>↑ 12 today</em></div>
+          <div class="operator-kpi"><span>Network availability</span><strong>98.4%</strong><em>Healthy</em></div>
+          <div class="operator-kpi"><span>Open escalations</span><strong>7</strong><em>3 need action</em></div>
+          <div class="operator-kpi"><span>Avg. response time</span><strong>4m 18s</strong><em>↓ 16% this week</em></div>
+        </div>
+        <div class="operator-columns">
+          <section class="card operator-panel">
+            <h3>Recent charging sessions</h3>
+            <table class="operator-table"><thead><tr><th>Session</th><th>Location</th><th>Energy</th><th>Status</th></tr></thead><tbody>
+              <tr><td><strong>FLOW-DEMO-4381</strong></td><td>Marina Bay • Port 04</td><td>18.9 kWh</td><td class="status">Escalated</td></tr>
+              <tr><td><strong>FLOW-DEMO-4379</strong></td><td>Orchard • Port 02</td><td>31.4 kWh</td><td class="status">Charging</td></tr>
+              <tr><td><strong>FLOW-DEMO-4372</strong></td><td>Changi • Port 11</td><td>42.7 kWh</td><td class="status">Completed</td></tr>
+            </tbody></table>
+          </section>
+          <section class="card operator-panel"><h3>Flow escalations</h3>
+            <div class="operator-alert"><strong>Charging interrupted · FLOW-DEMO-4381</strong>Flow attached the charger, port, payment state and last energy reading. Review and contact the driver.</div>
+            <div class="operator-alert"><strong>Connector unavailable · FLOW-DEMO-4368</strong>Driver support has already confirmed the location and connector details.</div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="interface-workspace active" id="driverWorkspace">
+    <div class="driver-workflow">
+    <div class="stepper">
+      <button class="step-tab active" data-go="scan">Scan</button>
+      <button class="step-tab" data-go="charging">Charge</button>
+      <button class="step-tab" data-go="issue">Issue</button>
+      <button class="step-tab" data-go="chat">Support</button>
+    </div>
+
+    <div class="flow-grid">
+      <section class="card phone-panel">
+        <div class="phone-frame">
+          <div class="phone-screen">
+
+            <!-- SCAN / CONFIRM -->
+            <div class="screen" id="scanScreen">
+              <div class="phone-status"><span>14:34</span><span>5G ◼︎ 82%</span></div>
+              <div class="mobile-head">
+                <div class="row">
+                  <button class="back-btn">←</button>
+                  <h2 style="flex:1">Confirm charger</h2>
+                  <button class="support-small" data-go="chat">Help</button>
+                </div>
+              </div>
+
+              <div class="mobile-content">
+                <div style="text-align:center;padding:8px 0 13px">
+                  <div style="width:54px;height:54px;border-radius:17px;background:var(--soft);color:var(--brand);display:grid;place-items:center;margin:auto;font-size:21px;font-weight:950">✓</div>
+                  <div style="font-size:13px;font-weight:950;margin-top:9px">Charger identified</div>
+                  <div style="font-size:7px;color:var(--muted);margin-top:3px">Flow matched the QR code to a participating operator</div>
+                </div>
+
+                <div class="operator-card">
+                  <div class="operator-top">
+                    <div class="operator-id">
+                      <div class="operator-logo">SHELL</div>
+                      <div>
+                        <h3>Shell Recharge</h3>
+                        <p>Example participating network • Port 04</p>
+                      </div>
+                    </div>
+                    <span class="badge ok">Available</span>
+                  </div>
+
+                  <div class="detail-grid">
+                    <div class="detail"><b>120 kW</b><span>DC fast charge</span></div>
+                    <div class="detail"><b>CCS2</b><span>connector</span></div>
+                    <div class="detail"><b>$0.65</b><span>/ kWh</span></div>
+                  </div>
+
+                  <div class="provider-note">
+                    Charging service and tariff shown in this demo are attributed to Shell Recharge. Flow provides the shared driver interface and session access layer.
+                  </div>
+                </div>
+
+                <div class="section-title">Payment method</div>
+                <div class="payment-card">
+                  <div class="pay-logo">VISA</div>
+                  <div style="flex:1"><strong>Visa •••• 4242</strong><br><span>Your saved Flow payment method</span></div>
+                  <div style="font-size:9px;color:var(--success);font-weight:950">✓</div>
+                </div>
+
+                <div class="section-title">Before you start</div>
+                <div class="session-row"><span>Charging tariff</span><strong>$0.65 / kWh</strong></div>
+                <div class="session-row"><span>Connector</span><strong>CCS2 • 120 kW</strong></div>
+                <div class="session-row"><span>Charging operator</span><strong>Shell Recharge</strong></div>
+
+                <button class="action-btn" id="startChargingBtn">Authorise & start charging</button>
+                <button class="secondary-btn" data-go="chat">Need help before starting?</button>
+              </div>
+            </div>
+
+            <!-- CHARGING -->
+            <div class="screen hidden" id="chargingScreen">
+              <div class="phone-status"><span>14:38</span><span>5G ◼︎ 80%</span></div>
+              <div class="mobile-head">
+                <div class="row">
+                  <button class="back-btn" data-go="scan">←</button>
+                  <h2 style="flex:1">Charging</h2>
+                  <button class="support-small" data-go="chat">Help</button>
+                </div>
+              </div>
+
+              <div class="mobile-content">
+                <div class="operator-card">
+                  <div class="operator-top">
+                    <div class="operator-id">
+                      <div class="operator-logo">SHELL</div>
+                      <div>
+                        <h3>Shell Recharge</h3>
+                        <p>Port 04 • Session FLOW-DEMO-4381</p>
+                      </div>
+                    </div>
+                    <span class="badge ok" id="chargeBadge">Live</span>
+                  </div>
+                </div>
+
+                <div class="charge-status">
+                  <div class="charge-ring" id="chargeRing">
+                    <div class="charge-inner">
+                      <strong id="batteryLevel">67%</strong>
+                      <span>estimated battery</span>
+                    </div>
+                  </div>
+                  <div class="live-status" id="liveStatus"><span class="live-dot"></span> Charging normally</div>
+                </div>
+
+                <div class="charge-metrics">
+                  <div class="metric"><strong id="energyValue">18.4 kWh</strong><span>energy delivered</span></div>
+                  <div class="metric"><strong id="costValue">$11.96</strong><span>current cost</span></div>
+                  <div class="metric"><strong id="timeValue">24 min</strong><span>duration</span></div>
+                </div>
+
+                <div class="session-row"><span>Operator</span><strong>Shell Recharge</strong></div>
+                <div class="session-row"><span>Tariff</span><strong>$0.65 / kWh</strong></div>
+                <div class="session-row"><span>Payment</span><strong>Visa •••• 4242</strong></div>
+                <div class="session-row"><span>Session ID</span><strong>FLOW-DEMO-4381</strong></div>
+
+                <div class="issue-banner" id="issueBanner">
+                  <strong>Charging interrupted</strong><br>
+                  Flow has stopped receiving energy updates from this charger. Your session context is ready to send to support.
+                  <div class="issue-actions">
+                    <button class="chat-action" data-go="chat">Chat with Flow</button>
+                    <button class="call-action" data-go="call">Call support</button>
+                  </div>
+                </div>
+
+                <button class="action-btn" id="simulateIssueBtn" style="background:linear-gradient(135deg,#9f5a0b,#d28a27)">Simulate charging issue</button>
+                <button class="secondary-btn" id="stopSessionBtn">Stop charging</button>
+              </div>
+            </div>
+
+            <!-- CHAT -->
+            <div class="screen hidden" id="chatScreen">
+              <div class="phone-status"><span>14:42</span><span>5G ◼︎ 78%</span></div>
+              <div class="support-screen">
+                <div class="support-header">
+                  <div class="row">
+                    <button class="back-btn" data-go="charging">←</button>
+                    <div>
+                      <h2>Flow Support</h2>
+                      <p>Human support • Session context attached</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="support-context">
+                  <strong>Issue attached automatically</strong>
+                  <span>Shell Recharge • Port 04 • FLOW-DEMO-4381 • charging interrupted</span>
+                </div>
+
+                <div class="chat-window">
+                  <div class="messages" id="messages">
+                    <div class="bubble agent">Hi, I’m Amelia from Flow Support. I can already see the charging session you’re contacting us about.</div>
+                    <div class="bubble agent">The session started successfully, but Flow stopped receiving energy updates after 18.9 kWh. Your payment has not been finalised yet.</div>
+                    <div class="bubble user">The charger suddenly stopped and the car says charging ended.</div>
+                    <div class="bubble agent">Thanks. I have the charger ID, session ID, operator and payment authorisation attached, so you do not need to find those details for me.</div>
+                    <div class="operator-escalation">Operator escalation ready: Flow can pass the session reference and error context to the relevant charging operator support team if the issue cannot be resolved at first line.</div>
+                  </div>
+
+                  <div class="chat-compose">
+                    <input id="chatInput" placeholder="Type a message…">
+                    <button id="sendChat">Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CALL -->
+            <div class="screen hidden" id="callScreen">
+              <div class="phone-status" style="background:transparent;color:#fff"><span>14:43</span><span>5G ◼︎ 78%</span></div>
+              <div class="call-screen">
+                <button class="back-btn" data-go="charging">←</button>
+
+                <div class="call-avatar">A</div>
+                <h2>Flow Support</h2>
+                <p>Connected to Amelia</p>
+                <div class="call-status">● Live support call</div>
+
+                <div class="call-context">
+                  <strong>Your session details are already attached</strong>
+                  <p>Operator: Shell Recharge<br>
+                  Port: 04<br>
+                  Session: FLOW-DEMO-4381<br>
+                  Last energy reading: 18.9 kWh<br>
+                  Payment: authorised, not finalised<br>
+                  Issue: charging stopped unexpectedly</p>
+                </div>
+
+                <p style="max-width:270px;margin:0 auto;line-height:1.6">The support specialist can troubleshoot with you and escalate the session to the charging operator using the attached context.</p>
+
+                <div class="call-controls">
+                  <button class="call-control">◉</button>
+                  <button class="call-control">⌁</button>
+                  <button class="call-control end" data-go="charging">×</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <aside class="card help-card">
+        <h3>Behind the experience</h3>
+        <p>Flow keeps the session, payment and support context together.</p>
+
+        <div class="help-flow">
+          <div class="help-step">
+            <span>1 • Scan</span>
+            <strong>Identify the right charger</strong>
+            <p>Operator and port details appear instantly.</p>
+          </div>
+          <div class="help-step">
+            <span>2 • Start</span>
+            <strong>Start with the network</strong>
+            <p>Tariff and payment stay visible.</p>
+          </div>
+          <div class="help-step">
+            <span>3 • Problem</span>
+            <strong>Spot issues early</strong>
+            <p>The session is already attached.</p>
+          </div>
+          <div class="help-step">
+            <span>4 • Support</span>
+            <strong>Get help without repeating yourself</strong>
+            <p>Chat, call or escalate in one flow.</p>
+          </div>
+        </div>
+
+        <div class="context-card">
+          <h4>Context Flow can attach</h4>
+          <div class="context-grid">
+            <div class="context-item"><span>Operator</span><strong>Shell Recharge</strong></div>
+            <div class="context-item"><span>Port</span><strong>04</strong></div>
+            <div class="context-item"><span>Session</span><strong>FLOW-DEMO-4381</strong></div>
+            <div class="context-item"><span>Energy</span><strong>18.9 kWh</strong></div>
+            <div class="context-item"><span>Payment</span><strong>Authorised</strong></div>
+            <div class="context-item"><span>Issue</span><strong>No new energy data</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;padding:11px;border-radius:12px;background:#f6f8f9;color:#74818d;font-size:8px;line-height:1.55">
+          <strong style="color:#465a6b">Why this matters to operators:</strong><br>
+          Flow can absorb the initial user-facing support interaction and send a much better-structured escalation to the operator instead of every driver beginning with “the charger isn’t working”.
+        </div>
+      </aside>
+    </div>
+    </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

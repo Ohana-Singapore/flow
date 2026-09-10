@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow — EV Operator Pitch Demo</title>
+<style>
+:root{
+  --ink:#10222f;
+  --muted:#6b7787;
+  --brand:#0c766e;
+  --brand2:#14b8a6;
+  --soft:#ebf8f5;
+  --line:#e4eaee;
+  --bg:#f6f8fa;
+  --blue:#1f577f;
+  --blue-soft:#edf5fc;
+  --warning:#fff3df;
+  --warning-text:#a56408;
+  --success:#e9f8f0;
+  --success-text:#16805b;
+  --danger:#ffeded;
+  --danger-text:#b23f3f;
+  --shadow:0 18px 55px rgba(16,34,47,.08);
+  --shadow-lg:0 28px 80px rgba(16,34,47,.14);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:#fff;
+}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer}
+a{text-decoration:none;color:inherit}
+.container{width:min(1180px,calc(100% - 40px));margin:auto}
+.nav-shell{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(228,234,238,.9);
+}
+nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;font-size:24px;letter-spacing:-.9px}
+.brandmark{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;
+  box-shadow:0 10px 24px rgba(12,118,110,.24)
+}
+.audience-switch{
+  display:flex;padding:4px;border-radius:999px;background:#f1f4f6;border:1px solid #e8edf0
+}
+.audience-switch button{
+  padding:10px 16px;border-radius:999px;background:transparent;color:#697685;
+  font-size:12px;font-weight:950
+}
+.audience-switch button.active{background:#fff;color:var(--brand);box-shadow:0 3px 12px rgba(16,34,47,.09)}
+.nav-right{display:flex;align-items:center;gap:20px}
+.navlinks{display:flex;gap:20px;color:#586677;font-size:12px;font-weight:850}
+.navcta{padding:11px 16px;border-radius:12px;background:var(--ink);color:#fff;font-weight:950}
+.audience-page{display:none}
+.audience-page.active{display:block}
+.hero{
+  padding:74px 0 78px;
+  background:radial-gradient(circle at 82% 10%,rgba(20,184,166,.14),transparent 30%),linear-gradient(180deg,#fbfefd,#fff)
+}
+.operator-hero{
+  background:radial-gradient(circle at 82% 10%,rgba(31,87,127,.13),transparent 32%),linear-gradient(180deg,#fbfdff,#fff)
+}
+.hero-grid{display:grid;grid-template-columns:.96fr 1.04fr;gap:52px;align-items:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;
+  background:var(--soft);color:var(--brand);font-size:10px;font-weight:950;letter-spacing:.09em;text-transform:uppercase
+}
+.operator-hero .eyebrow{background:var(--blue-soft);color:var(--blue)}
+.hero h1{font-size:60px;line-height:.99;letter-spacing:-2.9px;margin:20px 0 16px}
+.hero p{color:var(--muted);font-size:17px;line-height:1.65;max-width:640px}
+.hero-actions{display:flex;gap:10px;margin-top:25px}
+.primary{padding:13px 18px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:950}
+.operator-hero .primary{background:linear-gradient(135deg,#214f78,#2c78ab)}
+.secondary{padding:13px 18px;border-radius:12px;background:#f1f4f6;color:#405365;font-weight:900}
+.proof{display:flex;flex-wrap:wrap;gap:18px;margin-top:23px;color:#607080;font-size:10px;font-weight:850}
+.section{padding:84px 0}
+.section.alt{background:var(--bg)}
+.section-head{text-align:center;max-width:780px;margin:0 auto 42px}
+.section-head span{color:var(--brand);font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:.11em}
+.section-head h2{margin:10px 0 12px;font-size:40px;letter-spacing:-1.7px}
+.section-head p{color:var(--muted);font-size:14px;line-height:1.65}
+.operator-visual{background:#0f1e29;border-radius:25px;padding:12px;box-shadow:var(--shadow-lg)}
+.operator-window{background:#f6f8fa;border-radius:18px;overflow:hidden}
+.window-head{display:flex;justify-content:space-between;align-items:center;padding:15px 17px;background:#fff;border-bottom:1px solid var(--line)}
+.window-head strong{font-size:13px}.window-head span{font-size:9px;color:#7a8896}
+.fit-grid{padding:18px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:12px}
+.fit-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;min-height:150px}
+.fit-card.flow{border-color:#a7ddd4;background:#f2faf8}
+.fit-card h3{margin:0 0 7px;font-size:14px}
+.fit-card p{margin:0;color:var(--muted);font-size:10px;line-height:1.6}
+.fit-chip{display:inline-block;padding:5px 7px;border-radius:999px;background:#f2f5f7;color:#627081;font-size:8px;font-weight:950;margin-bottom:10px}
+.fit-card.flow .fit-chip{background:#dff5ef;color:#1f6f67}
+.fit-arrow{color:#98a4ae;font-size:22px;font-weight:900}
+.operator-note{margin:0 18px 18px;padding:14px;border-radius:14px;background:#edf9f6;color:#365f5a;font-size:10px;line-height:1.55}
+.value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.value-card{border:1px solid var(--line);border-radius:19px;background:#fff;padding:24px;box-shadow:var(--shadow)}
+.value-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-weight:950;margin-bottom:15px}
+.value-icon.blue{background:var(--blue-soft);color:var(--blue)}
+.value-icon.green{background:var(--soft);color:var(--brand)}
+.value-card h3{margin:0 0 8px;font-size:18px}
+.value-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.reassurance{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.re-box{border:1px solid var(--line);border-radius:18px;padding:24px;background:#fff}
+.re-box strong{display:block;font-size:18px;margin:0 0 8px}
+.re-box p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.step{border:1px solid var(--line);border-radius:18px;background:#fff;padding:20px}
+.step .num{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font-size:9px;font-weight:950;margin-bottom:12px}
+.step h3{margin:0 0 8px;font-size:15px}
+.step p{margin:0;color:var(--muted);font-size:10px;line-height:1.55}
+.commercial-shell{display:grid;grid-template-columns:.92fr 1.08fr;gap:18px;align-items:stretch}
+.commercial-copy{border-radius:24px;padding:30px;color:#fff;background:linear-gradient(145deg,#143c59,#0c5b55)}
+.commercial-copy h2{font-size:35px;letter-spacing:-1.4px;margin:12px 0}
+.commercial-copy > p{color:rgba(255,255,255,.72);font-size:11px;line-height:1.65}
+.fee-block{margin-top:14px;padding:15px;border-radius:15px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.08)}
+.fee-label{font-size:8px;color:rgba(255,255,255,.56);font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.fee-block strong{display:block;margin:5px 0 5px;font-size:17px}
+.fee-block span{display:block;color:rgba(255,255,255,.7);font-size:9px;line-height:1.5}
+.alignment-note{margin-top:14px;padding:13px;border-radius:14px;background:rgba(223,245,239,.13);color:#dffbf4;font-size:9px;line-height:1.55}
+.roi-card{border:1px solid var(--line);border-radius:24px;background:#fff;padding:28px}
+.roi-card h3{margin:0 0 5px;font-size:22px}
+.roi-card > p{margin:0 0 18px;color:var(--muted);font-size:10px;line-height:1.55}
+.roi-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.roi-field label{display:block;margin-bottom:6px;color:#7d8996;font-size:8px;font-weight:950;letter-spacing:.07em;text-transform:uppercase}
+.roi-field input{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;background:#fbfcfd;outline:none;font-size:11px}
+.roi-results{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.roi-result{background:#f5f8fa;border-radius:12px;padding:12px}
+.roi-result span{display:block;font-size:8px;color:#7f8b97}
+.roi-result strong{display:block;margin-top:4px;font-size:18px}
+.roi-result.highlight{background:#edf9f6}
+.roi-result.highlight strong{color:var(--brand)}
+.roi-footnote{margin-top:10px;color:#8e99a3;font-size:8px;line-height:1.5}
+.driver-visual{background:#fff;border:1px solid var(--line);border-radius:25px;padding:14px;box-shadow:var(--shadow-lg)}
+.phone-frame{width:min(410px,100%);margin:auto;background:#111a21;border-radius:38px;padding:9px;box-shadow:0 28px 70px rgba(17,26,33,.22)}
+.phone-screen{background:#f6f8fa;border-radius:31px;overflow:hidden;min-height:760px}
+.phone-status{height:34px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;background:#fff;font-size:8px;font-weight:850}
+.mobile-head{background:#fff;border-bottom:1px solid var(--line);padding:14px 16px}
+.mobile-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mobile-head h2{margin:0;font-size:18px;letter-spacing:-.5px}
+.tiny-btn{width:30px;height:30px;border-radius:10px;background:#f1f4f6;color:#4c6171;font-weight:950}
+.help-btn{border-radius:10px;padding:8px 10px;background:var(--soft);color:var(--brand);font-size:8px;font-weight:950}
+.mobile-content{padding:14px}
+.app-step-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;padding:12px 12px 0}
+.app-step-nav button{padding:10px;border-radius:12px;background:#fff;border:1px solid var(--line);color:#7a8793;font-size:8px;font-weight:900}
+.app-step-nav button.active{background:var(--soft);color:var(--brand);border-color:#bee5de}
+.screen{display:none}.screen.active{display:block}
+.operator-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}
+.operator-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.operator-id{display:flex;gap:10px;align-items:center}
+.operator-logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#fff3df;color:#9a600b;font-size:9px;font-weight:950}
+.operator-id h3{margin:0;font-size:13px}
+.operator-id p{margin:3px 0 0;color:var(--muted);font-size:8px}
+.badge{padding:5px 7px;border-radius:999px;font-size:7px;font-weight:950}
+.badge.ok{background:var(--success);color:var(--success-text)}
+.badge.bad{background:var(--danger);color:var(--danger-text)}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}
+.detail{padding:9px;border-radius:10px;background:#f5f7f8}
+.detail b{display:block;font-size:9px}
+.detail span{font-size:6.5px;color:#89949f}
+.provider-note{margin-top:10px;padding:9px;border-radius:10px;background:#f5faf9;color:#56736f;font-size:7px;line-height:1.5}
+.section-title{margin:14px 0 8px;font-size:9px;font-weight:950}
+.payment-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:11px;display:flex;align-items:center;gap:9px}
+.pay-logo{width:34px;height:34px;border-radius:9px;background:#f1f4f6;display:grid;place-items:center;font-size:7px;font-weight:950}
+.payment-card strong{font-size:9px}.payment-card span{font-size:7px;color:var(--muted)}
+.rowline{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:7.5px}
+.rowline span:first-child{color:var(--muted)}
+.action-btn{width:100%;padding:12px;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));font-size:9px;font-weight:950;margin-top:12px}
+.secondary-btn{width:100%;padding:11px;border-radius:12px;background:#eef2f4;color:#465a6b;font-size:8px;font-weight:900;margin-top:7px}
+.charge-status{text-align:center;padding:8px 0 4px}
+.charge-ring{width:178px;height:178px;border-radius:50%;margin:12px auto;background:conic-gradient(var(--brand2) 0 67%,#e5ebef 67% 100%);display:grid;place-items:center;position:relative}
+.charge-ring:after{content:"";width:145px;height:145px;border-radius:50%;background:#fff;position:absolute}
+.charge-inner{z-index:1}
+.charge-inner strong{display:block;font-size:30px;letter-spacing:-1px}
+.charge-inner span{font-size:7px;color:var(--muted)}
+.live-pill{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;background:var(--success);color:var(--success-text);font-size:7px;font-weight:950}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#1fa06e}
+.charge-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:13px 0}
+.metric{background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px;text-align:center}
+.metric strong{display:block;font-size:11px}.metric span{font-size:6.5px;color:var(--muted)}
+.issue-banner{display:none;margin-top:11px;padding:11px;border-radius:12px;background:var(--danger);color:#8a3737;font-size:8px;line-height:1.5}
+.issue-banner.show{display:block}
+.issue-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.issue-actions button{padding:10px;border-radius:11px;font-size:7.5px;font-weight:950}
+.chat-action{background:var(--brand);color:#fff}.call-action{background:#fff;color:#8f3f3f;border:1px solid #e3bcbc}
+.support-layout{display:grid;grid-template-columns:.98fr 1.02fr;gap:18px;align-items:start}
+.support-copy{border:1px solid var(--line);border-radius:22px;background:#fff;padding:24px;box-shadow:var(--shadow)}
+.support-copy h3{margin:0 0 10px;font-size:24px;letter-spacing:-1px}
+.support-copy p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+.support-points{display:grid;gap:11px;margin-top:18px}
+.support-point{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.support-point strong{display:block;font-size:12px;margin-bottom:4px}
+.support-point p{font-size:10px;line-height:1.55}
+.context-card{margin-top:14px;border-radius:15px;padding:14px;background:#102b2e;color:#fff}
+.context-card h4{margin:0 0 8px;font-size:10px}
+.context-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.context-item{background:rgba(255,255,255,.08);border-radius:9px;padding:8px}
+.context-item span{display:block;font-size:6px;color:rgba(255,255,255,.58)}
+.context-item strong{display:block;margin-top:3px;font-size:8px}
+.support-screen{min-height:760px;background:#fff;display:flex;flex-direction:column}
+.support-header{padding:14px 16px;border-bottom:1px solid var(--line)}
+.support-header h2{margin:0;font-size:16px}
+.support-header p{margin:3px 0 0;color:var(--muted);font-size:7px}
+.support-context{padding:11px 14px;background:#f7f9fa;border-bottom:1px solid var(--line)}
+.support-context strong{display:block;font-size:8px}
+.support-context span{font-size:7px;color:var(--muted)}
+.chat-window{flex:1;display:flex;flex-direction:column;padding:12px 14px}
+.messages{flex:1;display:flex;flex-direction:column;gap:8px}
+.bubble{max-width:81%;padding:9px 10px;border-radius:12px;font-size:7.5px;line-height:1.5}
+.bubble.agent{align-self:flex-start;background:#f0f3f5;color:#354959;border-bottom-left-radius:4px}
+.bubble.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+.escalation{align-self:flex-start;max-width:88%;padding:9px;border-radius:11px;background:#fff8e8;border:1px solid #efe0b7;color:#745f2d;font-size:7px;line-height:1.45}
+.chat-compose{display:flex;gap:6px;border-top:1px solid var(--line);padding-top:9px}
+.chat-compose input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 10px;outline:none;font-size:8px}
+.chat-compose button{border-radius:10px;padding:0 11px;background:var(--brand);color:#fff;font-size:8px;font-weight:950}
+.apply-shell{display:grid;grid-template-columns:.74fr 1.26fr;gap:20px}
+.apply-copy{position:sticky;top:110px;border-radius:24px;padding:30px;background:linear-gradient(145deg,#10393a,#133c52);color:#fff}
+.apply-copy h3{margin:15px 0 12px;font-size:38px;line-height:1.05;letter-spacing:-1.6px}
+.apply-copy p{color:rgba(255,255,255,.74);font-size:12px;line-height:1.65}
+.apply-points{display:grid;gap:10px;margin-top:18px}
+.apply-points div{display:flex;gap:8px;font-size:10px;line-height:1.5}
+.apply-form{border:1px solid var(--line);border-radius:24px;background:#fff;padding:28px;box-shadow:var(--shadow)}
+.apply-form h2{margin:0;font-size:26px;letter-spacing:-.8px}
+.apply-form > p{margin:5px 0 18px;color:var(--muted);font-size:11px;line-height:1.55}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-field.full{grid-column:1/-1}
+.form-field label{display:block;margin-bottom:6px;color:#7f8b98;font-size:8px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.form-field input,.form-field textarea,.form-field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fbfcfd;outline:none;font-size:11px;color:var(--ink)}
+.form-field textarea{min-height:105px;resize:vertical;line-height:1.5}
+.form-check{display:flex;gap:8px;align-items:flex-start;color:#72808e;font-size:8px;line-height:1.5;margin:15px 0}
+.submit{width:100%;padding:13px 16px;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));font-weight:950}
+.success{display:none;text-align:center;padding:28px 10px 10px}
+.success.show{display:block}
+.success-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto 13px;background:var(--success);color:var(--success-text);font-size:24px;font-weight:950}
+.success h3{margin:0 0 7px}
+.success p{max-width:430px;margin:0 auto 17px;color:var(--muted);font-size:10px;line-height:1.6}
+.finalbox{border-radius:28px;padding:54px;text-align:center;color:#fff;background:linear-gradient(135deg,#173d5d,#0f5953)}
+.finalbox h2{margin:0 0 12px;font-size:44px;letter-spacing:-2px}
+.finalbox p{max-width:720px;margin:0 auto 22px;color:rgba(255,255,255,.76);font-size:13px;line-height:1.65}
+footer{border-top:1px solid var(--line);padding:22px 0;color:#7f8a96;font-size:9px}
+.footer-row{display:flex;justify-content:space-between;gap:20px}
+@media(max-width:1000px){
+  .hero-grid,.commercial-shell,.support-layout,.apply-shell{grid-template-columns:1fr}
+  .value-grid,.reassurance{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .apply-copy{position:static}
+  .fit-grid{grid-template-columns:1fr}
+  .fit-arrow{transform:rotate(90deg);text-align:center}
+  .navlinks{display:none}
+}
+@media(max-width:720px){
+  .container{width:min(100% - 24px,1180px)}
+  nav{height:auto;padding:12px 0;flex-wrap:wrap}
+  .navcta{display:none}
+  .audience-switch{order:3;width:100%}
+  .audience-switch button{flex:1}
+  .hero{padding:42px 0 54px}
+  .hero h1{font-size:41px}
+  .hero p{font-size:15px}
+  .hero-actions,.proof{flex-direction:column}
+  .section{padding:62px 0}
+  .section-head h2,.finalbox h2{font-size:32px}
+  .value-grid,.reassurance,.steps,.roi-fields,.roi-results,.form-grid,.support-layout,.context-grid{grid-template-columns:1fr}
+  .form-field.full{grid-column:auto}
+  .apply-form{padding:22px}.apply-copy{padding:24px}.apply-copy h3{font-size:32px}
+  .finalbox{padding:36px 22px}.footer-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="nav-shell">
+  <div class="container">
+    <nav>
+      <div class="brand"><div class="brandmark">F</div>Flow</div>
+      <div class="audience-switch">
+        <button class="audience-tab active" data-audience="operator">EV Operator Interface</button>
+        <button class="audience-tab" data-audience="driver">Driver Interface</button>
+      </div>
+      <div class="nav-right">
+        <div class="navlinks" id="operatorNav">
+          <a href="#operator-value">Why Flow</a>
+          <a href="#operator-onboarding">Onboarding</a>
+          <a href="#operator-commercial">Commercial model</a>
+          <a href="#operator-apply">Pilot application</a>
+        </div>
+        <div class="navlinks" id="driverNav" style="display:none">
+          <a href="#driver-problem">The problem</a>
+          <a href="#driver-how">How Flow works</a>
+          <a href="#driver-benefits">Why drivers use it</a>
+        </div>
+        <button class="navcta" id="navCta">Explore pilot</button>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<main class="audience-page active" id="operatorPage">
+  <section class="hero operator-hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">For EV charging operators</div>
+        <h1>Turn new-to-network drivers into charging sessions.</h1>
+        <p>Flow gives drivers one seamless access journey across participating networks, while you keep your app, tariff and backend.</p>
+        <div class="hero-actions">
+          <button class="primary" onclick="document.getElementById('operator-value').scrollIntoView({behavior:'smooth'})">See the partnership model</button>
+          <button class="secondary switch-to-driver">View the driver interface</button>
+        </div>
+        <div class="proof">
+          <span>✓ Keep your own app</span>
+          <span>✓ Keep tariff control</span>
+          <span>✓ Pilot first, expand later</span>
+        </div>
+      </div>
+      <div class="operator-visual">
+        <div class="operator-window">
+          <div class="window-head">
+            <strong>How Flow fits into your existing network</strong>
+            <span>No replacement of your existing app or backend</span>
+          </div>
+          <div class="fit-grid">
+            <div class="fit-card">
+              <div class="fit-chip">Operator</div>
+              <h3>Your charging network</h3>
+              <p>Keep full control of your chargers, tariff, backend and direct app.</p>
+            </div>
+            <div class="fit-arrow">→</div>
+            <div class="fit-card flow">
+              <div class="fit-chip">Flow</div>
+              <h3>Interoperability layer</h3>
+              <p>Shared access, interoperability, session routing and support context.</p>
+            </div>
+            <div class="fit-arrow">→</div>
+            <div class="fit-card">
+              <div class="fit-chip">Demand</div>
+              <h3>New driver access</h3>
+              <p>Acquire drivers who do not already use your network.</p>
+            </div>
+          </div>
+          <div class="operator-note"><strong>The proposition:</strong> Flow does not ask you to replace your app or surrender your direct customer channel. It gives you an additional way to convert drivers who might otherwise skip an unfamiliar charger.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="operator-value">
+    <div class="container">
+      <div class="section-head">
+        <span>Why Flow</span>
+        <h2>More utilisation. Less driver friction.</h2>
+        <p>Flow helps convert new-to-network drivers who may otherwise skip an unfamiliar charger.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-card"><div class="value-icon blue">↗</div><h3>Incremental utilisation</h3><p>Drive incremental utilisation from new-to-network drivers.</p></div>
+        <div class="value-card"><div class="value-icon blue">◫</div><h3>Measurable acquisition</h3><p>Track Flow-originated sessions and customer acquisition.</p></div>
+        <div class="value-card"><div class="value-icon blue">⌁</div><h3>Interoperability layer</h3><p>Add interoperability through OCPI or an agreed partner API.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="operator-principles">
+    <div class="container">
+      <div class="section-head">
+        <span>Designed to complement your network</span>
+        <h2>Flow complements your existing network.</h2>
+        <p>Your network, tariff and direct customer channel stay yours.</p>
+      </div>
+      <div class="reassurance">
+        <div class="re-box"><strong>You keep your direct channel</strong><p>Keep your app, loyal users and direct customer relationships.</p></div>
+        <div class="re-box"><strong>You keep tariff control</strong><p>You retain tariff control. Flow displays it clearly.</p></div>
+        <div class="re-box"><strong>You keep operating the chargers</strong><p>You keep operating your chargers and backend infrastructure.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="operator-onboarding">
+    <div class="container">
+      <div class="section-head">
+        <span>Onboarding</span>
+        <h2>Low-risk pilot first. Prove incremental value. Then scale.</h2>
+        <p>Validate interoperability, driver conversion and utilisation on selected chargers first.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="num">01</div><h3>Agree pilot scope</h3><p>Define pilot chargers, commercial terms and success metrics.</p></div>
+        <div class="step"><div class="num">02</div><h3>Connect systems</h3><p>Connect your network through OCPI or a partner API.</p></div>
+        <div class="step"><div class="num">03</div><h3>Map the network</h3><p>Sync charger data, live availability and operator tariff.</p></div>
+        <div class="step"><div class="num">04</div><h3>Test live sessions</h3><p>Test session start, stop, payment and support hand-off.</p></div>
+        <div class="step"><div class="num">05</div><h3>Launch & measure</h3><p>Launch and measure Flow-originated sessions and conversion.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="operator-commercial">
+    <div class="container">
+      <div class="section-head">
+        <span>Commercial model</span>
+        <h2>One onboarding fee + a success-based fee on Flow-originated sessions.</h2>
+        <p>Our incentives stay aligned: Flow earns when we generate successful charging sessions.</p>
+      </div>
+      <div class="commercial-shell">
+        <div class="commercial-copy">
+          <div class="eyebrow" style="background:rgba(255,255,255,.12);color:#fff">Operator commercial structure</div>
+          <h2>Simple, success-based and aligned.</h2>
+          <p>Final pricing depends on integration scope, network size and pilot requirements.</p>
+          <div class="fee-block"><div class="fee-label">1 • One-time</div><strong>Onboarding & integration fee</strong><span>Covers onboarding, integration, charger mapping, testing and launch.</span></div>
+          <div class="fee-block"><div class="fee-label">2 • Ongoing</div><strong>Per successful Flow-originated session fee</strong><span>Flow receives an agreed platform fee on each successful Flow-originated charging session.</span></div>
+          <div class="fee-block"><div class="fee-label">Operator retains</div><strong>Control of charger tariff and charging service</strong><span>You remain the charging-service provider and retain tariff control.</span></div>
+          <div class="alignment-note"><strong>Why this model:</strong> the variable component grows only when Flow generates successful charging activity through your network.</div>
+        </div>
+        <div class="roi-card">
+          <h3>Example commercial structure</h3>
+          <p>Model the economics of successful Flow-originated sessions.</p>
+          <div class="roi-fields">
+            <div class="roi-field"><label>Flow sessions / month</label><input id="roiSessions" type="number" value="1000" min="0"></div>
+            <div class="roi-field"><label>Average session value (S$)</label><input id="roiValue" type="number" value="18" min="0" step="0.1"></div>
+            <div class="roi-field"><label>Flow fee (%)</label><input id="roiFee" type="number" value="5" min="0" max="100" step="0.1"></div>
+          </div>
+          <div class="roi-results">
+            <div class="roi-result"><span>Charging revenue generated</span><strong id="roiGross">$18,000</strong></div>
+            <div class="roi-result"><span>Flow variable platform fee</span><strong id="roiFlowFee">$900</strong></div>
+            <div class="roi-result highlight"><span>Revenue remaining with operator*</span><strong id="roiOperator">$17,100</strong></div>
+          </div>
+          <div class="roi-footnote">*Charging revenue after the Flow variable platform fee only. Other operating and payment costs are not included. The one-time onboarding fee is separate.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="operator-apply">
+    <div class="container">
+      <div class="section-head">
+        <span>Operator pilot</span>
+        <h2>Start with a focused interoperability pilot.</h2>
+        <p>Validate incremental utilisation and driver conversion before any wider rollout.</p>
+      </div>
+      <div class="apply-shell">
+        <aside class="apply-copy">
+          <div class="eyebrow" style="background:rgba(255,255,255,.12);color:#fff">Start a conversation</div>
+          <h3>Low-risk pilot first.</h3>
+          <p>Start with selected chargers and measure acquisition, conversion and utilisation.</p>
+          <div class="apply-points">
+            <div><span>✓</span><span>Explore a pilot on a small group of chargers.</span></div>
+            <div><span>✓</span><span>Discuss onboarding fee and success-based session fee structure.</span></div>
+            <div><span>✓</span><span>Align on integration method, support hand-off and pilot success criteria.</span></div>
+          </div>
+        </aside>
+        <div class="apply-form">
+          <h2>Start a conversation with Flow</h2>
+          <p>No commitment beyond the pilot.</p>
+          <form id="operatorForm">
+            <div class="form-grid">
+              <div class="form-field"><label>Company</label><input required placeholder="EV operator / company name"></div>
+              <div class="form-field"><label>Work email</label><input required type="email" placeholder="you@company.com"></div>
+              <div class="form-field"><label>Your name</label><input required placeholder="Full name"></div>
+              <div class="form-field"><label>Role</label><input placeholder="e.g. Partnerships, Commercial, Product"></div>
+              <div class="form-field"><label>Charging network size</label><select><option>1–50 charge points</option><option>51–250</option><option>251–1,000</option><option>1,001–5,000</option><option>5,000+</option></select></div>
+              <div class="form-field"><label>Current integration capability</label><select><option>OCPI</option><option>Partner / private API</option><option>Both</option><option>Not sure</option></select></div>
+              <div class="form-field full"><label>What would you like to explore with Flow?</label><select><option>Customer acquisition / incremental utilisation</option><option>Commercial model: onboarding fee + per-session fee</option><option>Roaming / interoperability</option><option>Shared consumer access</option><option>Pilot across selected chargers</option><option>Other</option></select></div>
+              <div class="form-field full"><label>Tell us about the pilot you would be open to</label><textarea placeholder="For example: 10 chargers across 3 locations, API sandbox available, 8-week pilot. You can also note any preferred commercial terms or approval constraints."></textarea></div>
+            </div>
+            <label class="form-check"><input type="checkbox" required><span>I am open to being contacted to discuss whether a limited Flow pilot could be relevant to our network.</span></label>
+            <button class="submit" type="submit">Explore pilot with Flow</button>
+          </form>
+          <div class="success" id="operatorSuccess">
+            <div class="success-icon">✓</div>
+            <h3>Operator enquiry captured in the prototype</h3>
+            <p>This demo does not send data anywhere yet. In a production version, this would create a lead in Flow's backend and trigger follow-up with the operator team.</p>
+            <button class="primary" onclick="document.getElementById('operatorForm').style.display='';document.getElementById('operatorSuccess').classList.remove('show');">Back to form</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main class="audience-page" id="driverPage">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Driver experience</div>
+        <h1>One app. Multiple charging networks.</h1>
+        <p>Drivers should not need a new app, account and payment setup every time they encounter a different charging network.</p>
+        <div class="hero-actions">
+          <button class="primary" onclick="document.getElementById('driver-problem').scrollIntoView({behavior:'smooth'})">See the driver problem</button>
+          <button class="secondary switch-to-operator">Return to operator view</button>
+        </div>
+        <div class="proof">
+          <span>✓ One driver account</span>
+          <span>✓ One familiar access flow</span>
+          <span>✓ No separate wallet for every network</span>
+        </div>
+      </div>
+
+      <div class="operator-visual">
+        <div class="operator-window">
+          <div class="window-head">
+            <strong>Fragmented charging experience</strong>
+            <span>Too many apps. Too much friction.</span>
+          </div>
+          <div style="padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch">
+            <div class="fit-card">
+              <div class="fit-chip">Without Flow</div>
+              <h3>Without Flow</h3>
+              <p style="margin-bottom:12px">An unfamiliar charger often means:</p>
+              <div style="display:grid;gap:8px;font-size:10px;color:var(--muted);line-height:1.5">
+                <div>1. Find the operator</div>
+                <div>2. Download another app</div>
+                <div>3. Create another account</div>
+                <div>4. Add payment again</div>
+                <div>5. Learn another interface</div>
+              </div>
+            </div>
+            <div class="fit-card flow">
+              <div class="fit-chip">With Flow</div>
+              <h3>With Flow</h3>
+              <p style="margin-bottom:12px">One seamless charging journey:</p>
+              <div style="display:grid;gap:8px;font-size:10px;color:var(--muted);line-height:1.5">
+                <div>1. Find a compatible charger</div>
+                <div>2. See live availability + tariff</div>
+                <div>3. Scan or select</div>
+                <div>4. Authorise through Flow</div>
+                <div>5. Charge + get support in one place</div>
+              </div>
+            </div>
+          </div>
+          <div class="operator-note"><strong>Why this matters:</strong> Flow is intended to reduce the friction between discovering an unfamiliar charger and actually starting a paid charging session.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="driver-problem">
+    <div class="container">
+      <div class="section-head">
+        <span>Fragmented charging experience</span>
+        <h2>Availability alone does not guarantee conversion.</h2>
+        <p>Every extra app, sign-up and payment step increases the chance of abandonment.</p>
+      </div>
+
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="value-icon green">1</div>
+          <h3>Download friction</h3>
+          <p>Download friction for a one-off charging session.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon green">2</div>
+          <h3>Setup friction</h3>
+          <p>Repeated sign-up, OTP and payment setup.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon green">3</div>
+          <h3>Support friction</h3>
+          <p>Fragmented support when something goes wrong.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="driver-how">
+    <div class="container">
+      <div class="section-head">
+        <span>How Flow works for drivers</span>
+        <h2>Different operator. Same seamless Flow journey.</h2>
+        <p>The operator stays visible while Flow standardises the access journey.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step"><div class="num">01</div><h3>Find</h3><p>Discover compatible chargers, live availability and operator tariff.</p></div>
+        <div class="step"><div class="num">02</div><h3>Select</h3><p>Select a charger without switching into another operator app.</p></div>
+        <div class="step"><div class="num">03</div><h3>Authorise</h3><p>Use one Flow account and payment setup.</p></div>
+        <div class="step"><div class="num">04</div><h3>Charge</h3><p>Start and manage the charging session through Flow.</p></div>
+        <div class="step"><div class="num">05</div><h3>Get help</h3><p>Chat or call with charger and session context attached.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="driver-benefits">
+    <div class="container">
+      <div class="section-head">
+        <span>Why drivers would use Flow</span>
+        <h2>Less driver friction can mean more completed charging sessions.</h2>
+        <p>Make unfamiliar charging networks feel familiar.</p>
+      </div>
+
+      <div class="reassurance">
+        <div class="re-box">
+          <strong>One account</strong>
+          <p>One account across participating charging networks.</p>
+        </div>
+        <div class="re-box">
+          <strong>One payment setup</strong>
+          <p>One familiar payment journey.</p>
+        </div>
+        <div class="re-box">
+          <strong>One support entry point</strong>
+          <p>One support entry point across participating networks.</p>
+        </div>
+      </div>
+
+      <div class="operator-note" style="margin:18px 0 0;padding:18px;font-size:12px">
+        <strong>For the operator:</strong> the driver interface is not meant to replace your direct app. It is designed to capture customers who may not already have it, then route those successful charging sessions into your network.
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="driver-support">
+    <div class="container">
+      <div class="section-head">
+        <span>Support experience</span>
+        <h2>One support journey, even across different operators.</h2>
+        <p>Flow can attach charger, session and payment context before escalation.</p>
+      </div>
+
+      <div class="value-grid">
+        <div class="value-card"><div class="value-icon green">A</div><h3>Chat with Flow</h3><p>Open chat directly from the charging journey.</p></div>
+        <div class="value-card"><div class="value-icon green">B</div><h3>Call Flow support</h3><p>Call support with the active session already attached.</p></div>
+        <div class="value-card"><div class="value-icon green">C</div><h3>Structured operator escalation</h3><p>Escalate a structured case with session details to the operator.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="driver-apply">
+    <div class="container">
+      <div class="finalbox" style="background:linear-gradient(135deg,var(--brand),#174d72)">
+        <h2>Make your network easier for new drivers to access.</h2>
+        <p>Switch back to see the operator onboarding, pilot and commercial model.</p>
+        <button class="secondary switch-to-operator">Back to EV Operator Interface</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-row">
+    <span>Flow prototype • Operator pitch website</span>
+    <span>Prototype for partnership discussions.</span>
+  </div>
+</footer>
+
+<script>
+const operatorPage = document.getElementById('operatorPage');
+const driverPage = document.getElementById('driverPage');
+const operatorNav = document.getElementById('operatorNav');
+const driverNav = document.getElementById('driverNav');
+const navCta = document.getElementById('navCta');
+const audienceTabs = document.querySelectorAll('.audience-tab');
+
+function setAudience(audience){
+  const operator = audience === 'operator';
+  operatorPage.classList.toggle('active', operator);
+  driverPage.classList.toggle('active', !operator);
+  operatorNav.style.display = operator ? '' : 'none';
+  driverNav.style.display = operator ? 'none' : '';
+  navCta.textContent = operator ? 'Explore pilot' : 'How Flow works';
+  navCta.onclick = () => {
+    const target = operator ? document.getElementById('operator-apply') : document.getElementById('driver-how');
+    target.scrollIntoView({behavior:'smooth'});
+  };
+  audienceTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.audience === audience));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+audienceTabs.forEach(tab => tab.addEventListener('click', () => setAudience(tab.dataset.audience)));
+document.querySelectorAll('.switch-to-driver').forEach(btn => btn.addEventListener('click', () => setAudience('driver')));
+document.querySelectorAll('.switch-to-operator').forEach(btn => btn.addEventListener('click', () => setAudience('operator')));
+
+function updateRoi(){
+  const sessions = Math.max(0, Number(document.getElementById('roiSessions').value || 0));
+  const avgValue = Math.max(0, Number(document.getElementById('roiValue').value || 0));
+  const feePct = Math.max(0, Number(document.getElementById('roiFee').value || 0));
+  const gross = sessions * avgValue;
+  const flowFee = gross * (feePct / 100);
+  const operator = gross - flowFee;
+  const money = value => new Intl.NumberFormat('en-SG', {style:'currency',currency:'SGD',maximumFractionDigits:0}).format(value);
+  document.getElementById('roiGross').textContent = money(gross);
+  document.getElementById('roiFlowFee').textContent = money(flowFee);
+  document.getElementById('roiOperator').textContent = money(operator);
+}
+['roiSessions','roiValue','roiFee'].forEach(id => document.getElementById(id).addEventListener('input', updateRoi));
+updateRoi();
+
+document.getElementById('operatorForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  this.style.display = 'none';
+  document.getElementById('operatorSuccess').classList.add('show');
+});
+
+setAudience('operator');
+</script>
+</body>
+</html>

@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow Driver App — Charging & Support Demo</title>
+<style>
+:root{
+  --bg:#f3f6f8;
+  --card:#ffffff;
+  --ink:#10222f;
+  --muted:#6d7a88;
+  --line:#e4eaee;
+  --brand:#0d766e;
+  --brand2:#14b8a6;
+  --soft:#eaf8f5;
+  --success:#16805b;
+  --success-bg:#e9f8f0;
+  --warn:#a96708;
+  --warn-bg:#fff4df;
+  --danger:#b43f3f;
+  --danger-bg:#ffeded;
+  --shadow:0 18px 55px rgba(16,34,47,.10);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 75% 8%,rgba(20,184,166,.11),transparent 30%),
+    linear-gradient(180deg,#f7fafb,#f1f4f6);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+}
+button,input{font:inherit}
+button{border:0;cursor:pointer}
+.app-shell{
+  width:min(1180px,calc(100% - 30px));
+  margin:20px auto 40px;
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr);
+  gap:18px;
+}
+.sidebar{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  padding:18px;
+  height:fit-content;
+  position:sticky;
+  top:20px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:22px;
+}
+.brandmark{
+  width:39px;height:39px;border-radius:12px;
+  display:grid;place-items:center;
+  color:#fff;font-weight:950;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+}
+.brand strong{font-size:20px;letter-spacing:-.7px}
+.brand small{display:block;color:var(--muted);font-size:9px}
+.nav-label{
+  font-size:8px;
+  color:#99a4af;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  font-weight:950;
+  margin:17px 8px 7px;
+}
+.nav-btn{
+  width:100%;
+  text-align:left;
+  border-radius:12px;
+  padding:11px 12px;
+  background:transparent;
+  color:#566575;
+  font-weight:850;
+  font-size:11px;
+  margin-bottom:4px;
+}
+.nav-btn.active{background:var(--soft);color:var(--brand)}
+.demo-note{
+  margin-top:18px;
+  padding:11px;
+  border-radius:12px;
+  background:#fff8e8;
+  border:1px solid #efe0b8;
+  color:#745f2c;
+  font-size:8px;
+  line-height:1.5;
+}
+.main{
+  min-width:0;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:14px;
+}
+.topbar h1{
+  margin:0;
+  font-size:27px;
+  letter-spacing:-1px;
+}
+.topbar p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:11px;
+}
+.account-pill{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:9px 12px;
+  font-size:9px;
+  font-weight:850;
+  color:#596878;
+}
+.view{display:none}
+.view.active{display:block}
+.interface-tabs{
+  display:flex;
+  gap:4px;
+  padding:4px;
+  background:#eaf0f2;
+  border:1px solid #dde6e9;
+  border-radius:14px;
+  margin-bottom:14px;
+}
+.interface-tab{
+  flex:1;
+  padding:10px 14px;
+  border-radius:10px;
+  background:transparent;
+  color:#657482;
+  font-size:10px;
+  font-weight:950;
+}
+.interface-tab.active{background:#fff;color:var(--brand);box-shadow:0 3px 12px rgba(16,34,47,.09)}
+.interface-workspace{display:none}
+.interface-workspace.active{display:block}
+.operator-dashboard{display:grid;gap:16px}
+.operator-hero-card{padding:22px;background:linear-gradient(135deg,#143c59,#0c766e);color:#fff;border-radius:22px;box-shadow:var(--shadow)}
+.operator-hero-card h2{margin:0;font-size:24px;letter-spacing:-.8px}.operator-hero-card p{margin:6px 0 0;color:rgba(255,255,255,.72);font-size:11px}
+.operator-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.operator-kpi{padding:15px;background:#fff;border:1px solid var(--line);border-radius:16px}.operator-kpi span{display:block;color:var(--muted);font-size:8px}.operator-kpi strong{display:block;margin-top:6px;font-size:21px}.operator-kpi em{font-style:normal;color:var(--success);font-size:8px;font-weight:900}
+.operator-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}.operator-panel{padding:18px}.operator-panel h3{margin:0 0 12px;font-size:13px}.operator-table{width:100%;border-collapse:collapse;font-size:9px}.operator-table th{text-align:left;color:#8b97a2;font-size:8px;font-weight:900;padding:8px;border-bottom:1px solid var(--line)}.operator-table td{padding:11px 8px;border-bottom:1px solid #eef2f4}.operator-table .status{color:var(--success);font-weight:900}.operator-alert{padding:12px;border-radius:12px;background:#fff5e4;color:#7b602b;font-size:9px;line-height:1.5;margin-bottom:9px}.operator-alert strong{display:block;color:#9b650e;margin-bottom:3px}
+@media(max-width:850px){.operator-kpis{grid-template-columns:repeat(2,1fr)}.operator-columns{grid-template-columns:1fr}}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+}
+.flow-grid{
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:16px;
+}
+.phone-panel{
+  padding:15px;
+}
+.phone-frame{
+  width:min(390px,100%);
+  margin:auto;
+  background:#111b22;
+  border-radius:38px;
+  padding:9px;
+  box-shadow:0 28px 70px rgba(16,27,34,.24);
+}
+.phone-screen{
+  background:#f6f8fa;
+  border-radius:31px;
+  min-height:720px;
+  overflow:hidden;
+}
+.phone-status{
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  background:#fff;
+  font-size:8px;
+  font-weight:850;
+}
+.mobile-head{
+  background:#fff;
+  padding:14px 16px 13px;
+  border-bottom:1px solid var(--line);
+}
+.mobile-head .row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.mobile-head h2{
+  margin:0;
+  font-size:18px;
+  letter-spacing:-.5px;
+}
+.back-btn{
+  width:30px;height:30px;border-radius:10px;
+  background:#f1f4f6;color:#4e6071;font-weight:950;
+}
+.support-small{
+  border-radius:10px;
+  padding:8px 10px;
+  background:var(--soft);
+  color:var(--brand);
+  font-size:8px;
+  font-weight:950;
+}
+.mobile-content{padding:14px}
+.operator-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:14px;
+}
+.operator-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.operator-id{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.operator-logo{
+  width:40px;height:40px;
+  border-radius:12px;
+  display:grid;place-items:center;
+  background:#fff3df;
+  color:#9c610c;
+  font-weight:950;
+  font-size:9px;
+}
+.operator-id h3{margin:0;font-size:13px}
+.operator-id p{margin:3px 0 0;color:var(--muted);font-size:8px}
+.badge{
+  padding:5px 7px;
+  border-radius:999px;
+  font-size:7px;
+  font-weight:950;
+}
+.badge.ok{background:var(--success-bg);color:var(--success)}
+.badge.warn{background:var(--warn-bg);color:var(--warn)}
+.badge.bad{background:var(--danger-bg);color:var(--danger)}
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-top:12px;
+}
+.detail{
+  padding:9px;
+  border-radius:10px;
+  background:#f5f7f8;
+}
+.detail b{display:block;font-size:9px}
+.detail span{font-size:6.5px;color:#88949f}
+.provider-note{
+  margin-top:10px;
+  padding:9px;
+  border-radius:10px;
+  background:#f5faf9;
+  color:#53746f;
+  font-size:7px;
+  line-height:1.5;
+}
+.section-title{
+  font-size:9px;
+  font-weight:950;
+  margin:14px 0 8px;
+}
+.payment-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:11px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.pay-logo{
+  width:34px;height:34px;border-radius:9px;
+  display:grid;place-items:center;
+  background:#f1f4f6;
+  font-size:7px;font-weight:950;
+}
+.payment-card strong{font-size:9px}
+.payment-card span{font-size:7px;color:var(--muted)}
+.action-btn{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  color:#fff;
+  font-weight:950;
+  font-size:9px;
+  margin-top:12px;
+}
+.secondary-btn{
+  width:100%;
+  padding:11px;
+  border-radius:12px;
+  background:#eef2f4;
+  color:#465a6b;
+  font-weight:900;
+  font-size:8px;
+  margin-top:7px;
+}
+.charge-status{
+  text-align:center;
+  padding:6px 0 2px;
+}
+.charge-ring{
+  width:178px;height:178px;border-radius:50%;
+  margin:12px auto;
+  background:conic-gradient(var(--brand2) 0 67%,#e5ebef 67% 100%);
+  position:relative;
+  display:grid;place-items:center;
+}
+.charge-ring:after{
+  content:"";
+  width:145px;height:145px;border-radius:50%;
+  background:#fff;
+  position:absolute;
+}
+.charge-inner{z-index:1}
+.charge-inner strong{
+  display:block;
+  font-size:30px;
+  letter-spacing:-1px;
+}
+.charge-inner span{
+  color:var(--muted);
+  font-size:7px;
+}
+.live-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--success);
+  background:var(--success-bg);
+  padding:6px 8px;
+  border-radius:999px;
+  font-size:7px;
+  font-weight:950;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#20a26f;
+}
+.charge-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin:13px 0;
+}
+.metric{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:9px;
+  text-align:center;
+}
+.metric strong{display:block;font-size:11px}
+.metric span{font-size:6.5px;color:var(--muted)}
+.session-row{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  padding:8px 0;
+  border-bottom:1px solid var(--line);
+  font-size:7.5px;
+}
+.session-row span:first-child{color:var(--muted)}
+.issue-banner{
+  display:none;
+  padding:11px;
+  border-radius:12px;
+  background:var(--danger-bg);
+  color:#883737;
+  font-size:8px;
+  line-height:1.5;
+  margin-top:11px;
+}
+.issue-banner.show{display:block}
+.issue-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:9px;
+}
+.issue-actions button{
+  padding:10px;
+  border-radius:11px;
+  font-size:7.5px;
+  font-weight:950;
+}
+.chat-action{background:var(--brand);color:#fff}
+.call-action{background:#fff;border:1px solid #e3bcbc;color:#8f3f3f}
+.help-card{
+  padding:18px;
+}
+.help-card h3{
+  margin:0;
+  font-size:16px;
+}
+.help-card > p{
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.55;
+}
+.help-flow{
+  display:grid;
+  gap:9px;
+  margin-top:14px;
+}
+.help-step{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:#fff;
+}
+.help-step span{
+  display:block;
+  color:var(--brand);
+  font-size:7px;
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.help-step strong{
+  display:block;
+  font-size:10px;
+  margin:4px 0;
+}
+.help-step p{
+  margin:0;
+  font-size:8px;
+  color:var(--muted);
+  line-height:1.45;
+}
+.context-card{
+  margin-top:14px;
+  border-radius:14px;
+  background:#102b2e;
+  color:#fff;
+  padding:13px;
+}
+.context-card h4{margin:0 0 8px;font-size:10px}
+.context-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.context-item{
+  background:rgba(255,255,255,.08);
+  border-radius:9px;
+  padding:8px;
+}
+.context-item span{display:block;font-size:6px;color:rgba(255,255,255,.58)}
+.context-item strong{display:block;margin-top:3px;font-size:8px}
+
+/* SUPPORT SCREEN */
+.support-screen{
+  background:#fff;
+  min-height:720px;
+  display:flex;
+  flex-direction:column;
+}
+.support-header{
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+}
+.support-header .row{
+  display:flex;align-items:center;gap:9px;
+}
+.support-header h2{margin:0;font-size:16px}
+.support-header p{margin:3px 0 0;color:var(--muted);font-size:7px}
+.support-context{
+  padding:11px 14px;
+  background:#f7f9fa;
+  border-bottom:1px solid var(--line);
+}
+.support-context strong{display:block;font-size:8px}
+.support-context span{font-size:7px;color:var(--muted)}
+.chat-window{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:12px 14px;
+}
+.messages{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.bubble{
+  max-width:81%;
+  padding:9px 10px;
+  border-radius:12px;
+  font-size:7.5px;
+  line-height:1.5;
+}
+.bubble.agent{
+  align-self:flex-start;
+  background:#f0f3f5;
+  color:#354959;
+  border-bottom-left-radius:4px;
+}
+.bubble.user{
+  align-self:flex-end;
+  background:var(--brand);
+  color:#fff;
+  border-bottom-right-radius:4px;
+}
+.operator-escalation{
+  align-self:flex-start;
+  max-width:88%;
+  padding:9px;
+  border-radius:11px;
+  background:#fff8e8;
+  border:1px solid #efe0b7;
+  color:#745f2d;
+  font-size:7px;
+  line-height:1.45;
+}
+.chat-compose{
+  display:flex;
+  gap:6px;
+  padding-top:9px;
+  border-top:1px solid var(--line);
+}
+.chat-compose input{
+  flex:1;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:9px 10px;
+  outline:none;
+  font-size:8px;
+}
+.chat-compose button{
+  border-radius:10px;
+  padding:0 11px;
+  background:var(--brand);
+  color:#fff;
+  font-size:8px;
+  font-weight:950;
+}
+
+/* CALL SCREEN */
+.call-screen{
+  min-height:720px;
+  padding:20px 16px;
+  text-align:center;
+  background:linear-gradient(180deg,#10252d,#143940);
+  color:#fff;
+}
+.call-screen .back-btn{
+  display:block;
+  margin-bottom:32px;
+}
+.call-avatar{
+  width:82px;height:82px;border-radius:50%;
+  display:grid;place-items:center;
+  margin:0 auto 13px;
+  background:rgba(255,255,255,.12);
+  font-size:25px;
+  font-weight:950;
+}
+.call-screen h2{font-size:19px;margin:0}
+.call-screen p{
+  color:rgba(255,255,255,.64);
+  font-size:8px;
+}
+.call-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:6px;
+  padding:6px 8px;
+  background:rgba(255,255,255,.09);
+  border-radius:999px;
+  font-size:7px;
+}
+.call-context{
+  margin:30px 0 22px;
+  text-align:left;
+  border-radius:15px;
+  padding:13px;
+  background:rgba(255,255,255,.08);
+}
+.call-context strong{font-size:9px}
+.call-context p{
+  line-height:1.55;
+  margin:5px 0 0;
+}
+.call-controls{
+  display:flex;
+  justify-content:center;
+  gap:17px;
+  margin-top:28px;
+}
+.call-control{
+  width:52px;height:52px;border-radius:50%;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:15px;
+}
+.call-control.end{background:#cc4949}
+
+/* STEP NAV */
+.stepper{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:14px;
+}
+.step-tab{
+  padding:10px;
+  border-radius:13px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:#7b8793;
+  font-size:8px;
+  font-weight:900;
+  text-align:center;
+}
+.step-tab.active{
+  background:var(--soft);
+  color:var(--brand);
+  border-color:#bfe6de;
+}
+.hidden{display:none!important}
+
+@media(max-width:950px){
+  .app-shell{grid-template-columns:78px minmax(0,1fr)}
+  .brand div:last-child,.nav-label,.nav-btn span,.demo-note{display:none}
+  .brand{justify-content:center}
+  .nav-btn{text-align:center}
+  .flow-grid{grid-template-columns:1fr}
+  .help-card{order:-1}
+}
+@media(max-width:650px){
+  .app-shell{display:block;width:min(100% - 18px,1180px);margin-top:9px}
+  .sidebar{
+    position:fixed;
+    z-index:900;
+    left:9px;right:9px;bottom:8px;top:auto;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    padding:7px;
+    border-radius:17px;
+  }
+  .brand,.nav-label,.demo-note{display:none}
+  .nav-btn{width:auto;margin:0}
+  .main{padding-bottom:80px}
+  .topbar h1{font-size:23px}
+  .stepper{grid-template-columns:1fr 1fr}
+  .phone-frame{width:100%;max-width:390px}
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brandmark">F</div>
+      <div><strong>Flow</strong><small>Driver support demo</small></div>
+    </div>
+
+    <div class="nav-label">Demo flow</div>
+    <button class="nav-btn active" data-go="scan">⌗ <span>Scan & start</span></button>
+    <button class="nav-btn" data-go="charging">⚡ <span>Live charging</span></button>
+    <button class="nav-btn" data-go="chat">☏ <span>Chat support</span></button>
+    <button class="nav-btn" data-go="call">☎ <span>Call support</span></button>
+
+    <div class="demo-note">
+      Prototype example only. Shell Recharge is used as a familiar example operator. No partnership or live integration is implied.
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Post-scan charging experience</h1>
+        <p>Example of what a Flow driver could see after scanning a participating charger.</p>
+      </div>
+      <div class="account-pill">Singapore • Demo environment</div>
+    </div>
+
+    <div class="interface-tabs" role="tablist" aria-label="Choose interface">
+      <button class="interface-tab active" data-interface="driver">Driver interface</button>
+      <button class="interface-tab" data-interface="operator">Operator interface</button>
+    </div>
+
+    <section class="interface-workspace" id="operatorWorkspace">
+      <div class="operator-dashboard">
+        <div class="operator-hero-card">
+          <h2>Operator control centre</h2>
+          <p>Monitor charging sessions and resolve escalations shared by Flow with the right session context attached.</p>
+        </div>
+        <div class="operator-kpis">
+          <div class="operator-kpi"><span>Live sessions</span><strong>184</strong><em>↑ 12 today</em></div>
+          <div class="operator-kpi"><span>Network availability</span><strong>98.4%</strong><em>Healthy</em></div>
+          <div class="operator-kpi"><span>Open escalations</span><strong>7</strong><em>3 need action</em></div>
+          <div class="operator-kpi"><span>Avg. response time</span><strong>4m 18s</strong><em>↓ 16% this week</em></div>
+        </div>
+        <div class="operator-columns">
+          <section class="card operator-panel">
+            <h3>Recent charging sessions</h3>
+            <table class="operator-table"><thead><tr><th>Session</th><th>Location</th><th>Energy</th><th>Status</th></tr></thead><tbody>
+              <tr><td><strong>FLOW-DEMO-4381</strong></td><td>Marina Bay • Port 04</td><td>18.9 kWh</td><td class="status">Escalated</td></tr>
+              <tr><td><strong>FLOW-DEMO-4379</strong></td><td>Orchard • Port 02</td><td>31.4 kWh</td><td class="status">Charging</td></tr>
+              <tr><td><strong>FLOW-DEMO-4372</strong></td><td>Changi • Port 11</td><td>42.7 kWh</td><td class="status">Completed</td></tr>
+            </tbody></table>
+          </section>
+          <section class="card operator-panel"><h3>Flow escalations</h3>
+            <div class="operator-alert"><strong>Charging interrupted · FLOW-DEMO-4381</strong>Flow attached the charger, port, payment state and last energy reading. Review and contact the driver.</div>
+            <div class="operator-alert"><strong>Connector unavailable · FLOW-DEMO-4368</strong>Driver support has already confirmed the location and connector details.</div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="interface-workspace active" id="driverWorkspace">
+    <div class="stepper">
+      <button class="step-tab active" data-go="scan">1. Confirm charger</button>
+      <button class="step-tab" data-go="charging">2. Charge</button>
+      <button class="step-tab" data-go="issue">3. Issue detected</button>
+      <button class="step-tab" data-go="chat">4. Get help</button>
+    </div>
+
+    <div class="flow-grid">
+      <section class="card phone-panel">
+        <div class="phone-frame">
+          <div class="phone-screen">
+
+            <!-- SCAN / CONFIRM -->
+            <div class="screen" id="scanScreen">
+              <div class="phone-status"><span>14:34</span><span>5G ◼︎ 82%</span></div>
+              <div class="mobile-head">
+                <div class="row">
+                  <button class="back-btn">←</button>
+                  <h2 style="flex:1">Confirm charger</h2>
+                  <button class="support-small" data-go="chat">Help</button>
+                </div>
+              </div>
+
+              <div class="mobile-content">
+                <div style="text-align:center;padding:8px 0 13px">
+                  <div style="width:54px;height:54px;border-radius:17px;background:var(--soft);color:var(--brand);display:grid;place-items:center;margin:auto;font-size:21px;font-weight:950">✓</div>
+                  <div style="font-size:13px;font-weight:950;margin-top:9px">Charger identified</div>
+                  <div style="font-size:7px;color:var(--muted);margin-top:3px">Flow matched the QR code to a participating operator</div>
+                </div>
+
+                <div class="operator-card">
+                  <div class="operator-top">
+                    <div class="operator-id">
+                      <div class="operator-logo">SHELL</div>
+                      <div>
+                        <h3>Shell Recharge</h3>
+                        <p>Example participating network • Port 04</p>
+                      </div>
+                    </div>
+                    <span class="badge ok">Available</span>
+                  </div>
+
+                  <div class="detail-grid">
+                    <div class="detail"><b>120 kW</b><span>DC fast charge</span></div>
+                    <div class="detail"><b>CCS2</b><span>connector</span></div>
+                    <div class="detail"><b>$0.65</b><span>/ kWh</span></div>
+                  </div>
+
+                  <div class="provider-note">
+                    Charging service and tariff shown in this demo are attributed to Shell Recharge. Flow provides the shared driver interface and session access layer.
+                  </div>
+                </div>
+
+                <div class="section-title">Payment method</div>
+                <div class="payment-card">
+                  <div class="pay-logo">VISA</div>
+                  <div style="flex:1"><strong>Visa •••• 4242</strong><br><span>Your saved Flow payment method</span></div>
+                  <div style="font-size:9px;color:var(--success);font-weight:950">✓</div>
+                </div>
+
+                <div class="section-title">Before you start</div>
+                <div class="session-row"><span>Charging tariff</span><strong>$0.65 / kWh</strong></div>
+                <div class="session-row"><span>Connector</span><strong>CCS2 • 120 kW</strong></div>
+                <div class="session-row"><span>Charging operator</span><strong>Shell Recharge</strong></div>
+
+                <button class="action-btn" id="startChargingBtn">Authorise & start charging</button>
+                <button class="secondary-btn" data-go="chat">Need help before starting?</button>
+              </div>
+            </div>
+
+            <!-- CHARGING -->
+            <div class="screen hidden" id="chargingScreen">
+              <div class="phone-status"><span>14:38</span><span>5G ◼︎ 80%</span></div>
+              <div class="mobile-head">
+                <div class="row">
+                  <button class="back-btn" data-go="scan">←</button>
+                  <h2 style="flex:1">Charging</h2>
+                  <button class="support-small" data-go="chat">Help</button>
+                </div>
+              </div>
+
+              <div class="mobile-content">
+                <div class="operator-card">
+                  <div class="operator-top">
+                    <div class="operator-id">
+                      <div class="operator-logo">SHELL</div>
+                      <div>
+                        <h3>Shell Recharge</h3>
+                        <p>Port 04 • Session FLOW-DEMO-4381</p>
+                      </div>
+                    </div>
+                    <span class="badge ok" id="chargeBadge">Live</span>
+                  </div>
+                </div>
+
+                <div class="charge-status">
+                  <div class="charge-ring" id="chargeRing">
+                    <div class="charge-inner">
+                      <strong id="batteryLevel">67%</strong>
+                      <span>estimated battery</span>
+                    </div>
+                  </div>
+                  <div class="live-status" id="liveStatus"><span class="live-dot"></span> Charging normally</div>
+                </div>
+
+                <div class="charge-metrics">
+                  <div class="metric"><strong id="energyValue">18.4 kWh</strong><span>energy delivered</span></div>
+                  <div class="metric"><strong id="costValue">$11.96</strong><span>current cost</span></div>
+                  <div class="metric"><strong id="timeValue">24 min</strong><span>duration</span></div>
+                </div>
+
+                <div class="session-row"><span>Operator</span><strong>Shell Recharge</strong></div>
+                <div class="session-row"><span>Tariff</span><strong>$0.65 / kWh</strong></div>
+                <div class="session-row"><span>Payment</span><strong>Visa •••• 4242</strong></div>
+                <div class="session-row"><span>Session ID</span><strong>FLOW-DEMO-4381</strong></div>
+
+                <div class="issue-banner" id="issueBanner">
+                  <strong>Charging interrupted</strong><br>
+                  Flow has stopped receiving energy updates from this charger. Your session context is ready to send to support.
+                  <div class="issue-actions">
+                    <button class="chat-action" data-go="chat">Chat with Flow</button>
+                    <button class="call-action" data-go="call">Call support</button>
+                  </div>
+                </div>
+
+                <button class="action-btn" id="simulateIssueBtn" style="background:linear-gradient(135deg,#9f5a0b,#d28a27)">Simulate charging issue</button>
+                <button class="secondary-btn" id="stopSessionBtn">Stop charging</button>
+              </div>
+            </div>
+
+            <!-- CHAT -->
+            <div class="screen hidden" id="chatScreen">
+              <div class="phone-status"><span>14:42</span><span>5G ◼︎ 78%</span></div>
+              <div class="support-screen">
+                <div class="support-header">
+                  <div class="row">
+                    <button class="back-btn" data-go="charging">←</button>
+                    <div>
+                      <h2>Flow Support</h2>
+                      <p>Human support • Session context attached</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="support-context">
+                  <strong>Issue attached automatically</strong>
+                  <span>Shell Recharge • Port 04 • FLOW-DEMO-4381 • charging interrupted</span>
+                </div>
+
+                <div class="chat-window">
+                  <div class="messages" id="messages">
+                    <div class="bubble agent">Hi, I’m Amelia from Flow Support. I can already see the charging session you’re contacting us about.</div>
+                    <div class="bubble agent">The session started successfully, but Flow stopped receiving energy updates after 18.9 kWh. Your payment has not been finalised yet.</div>
+                    <div class="bubble user">The charger suddenly stopped and the car says charging ended.</div>
+                    <div class="bubble agent">Thanks. I have the charger ID, session ID, operator and payment authorisation attached, so you do not need to find those details for me.</div>
+                    <div class="operator-escalation">Operator escalation ready: Flow can pass the session reference and error context to the relevant charging operator support team if the issue cannot be resolved at first line.</div>
+                  </div>
+
+                  <div class="chat-compose">
+                    <input id="chatInput" placeholder="Type a message…">
+                    <button id="sendChat">Send</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CALL -->
+            <div class="screen hidden" id="callScreen">
+              <div class="phone-status" style="background:transparent;color:#fff"><span>14:43</span><span>5G ◼︎ 78%</span></div>
+              <div class="call-screen">
+                <button class="back-btn" data-go="charging">←</button>
+
+                <div class="call-avatar">A</div>
+                <h2>Flow Support</h2>
+                <p>Connected to Amelia</p>
+                <div class="call-status">● Live support call</div>
+
+                <div class="call-context">
+                  <strong>Your session details are already attached</strong>
+                  <p>Operator: Shell Recharge<br>
+                  Port: 04<br>
+                  Session: FLOW-DEMO-4381<br>
+                  Last energy reading: 18.9 kWh<br>
+                  Payment: authorised, not finalised<br>
+                  Issue: charging stopped unexpectedly</p>
+                </div>
+
+                <p style="max-width:270px;margin:0 auto;line-height:1.6">The support specialist can troubleshoot with you and escalate the session to the charging operator using the attached context.</p>
+
+                <div class="call-controls">
+                  <button class="call-control">◉</button>
+                  <button class="call-control">⌁</button>
+                  <button class="call-control end" data-go="charging">×</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <aside class="card help-card">
+        <h3>What this demo is showing</h3>
+        <p>The key product idea is not just starting the charger. It is keeping the entire support journey inside Flow if something goes wrong.</p>
+
+        <div class="help-flow">
+          <div class="help-step">
+            <span>1 • Scan</span>
+            <strong>Flow identifies the operator and charger</strong>
+            <p>The driver does not need to work out which charging app or support channel belongs to the charger.</p>
+          </div>
+          <div class="help-step">
+            <span>2 • Start</span>
+            <strong>The operator still provides the charging service</strong>
+            <p>Flow presents the operator tariff and routes the charging request through the participating network integration.</p>
+          </div>
+          <div class="help-step">
+            <span>3 • Problem</span>
+            <strong>Flow already knows what session failed</strong>
+            <p>The app can carry the charger ID, operator, payment state, timestamps and session ID into the support flow.</p>
+          </div>
+          <div class="help-step">
+            <span>4 • Support</span>
+            <strong>Chat or call without starting from zero</strong>
+            <p>The driver can speak to Flow first. If required, Flow escalates the issue to the operator with the relevant session context.</p>
+          </div>
+        </div>
+
+        <div class="context-card">
+          <h4>Context Flow can attach</h4>
+          <div class="context-grid">
+            <div class="context-item"><span>Operator</span><strong>Shell Recharge</strong></div>
+            <div class="context-item"><span>Port</span><strong>04</strong></div>
+            <div class="context-item"><span>Session</span><strong>FLOW-DEMO-4381</strong></div>
+            <div class="context-item"><span>Energy</span><strong>18.9 kWh</strong></div>
+            <div class="context-item"><span>Payment</span><strong>Authorised</strong></div>
+            <div class="context-item"><span>Issue</span><strong>No new energy data</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;padding:11px;border-radius:12px;background:#f6f8f9;color:#74818d;font-size:8px;line-height:1.55">
+          <strong style="color:#465a6b">Why this matters to operators:</strong><br>
+          Flow can absorb the initial user-facing support interaction and send a much better-structured escalation to the operator instead of every driver beginning with “the charger isn’t working”.
+        </div>
+      </aside>
+    </div>
+    </section>
+  </main>
+</div>
+
+<script>
+document.querySelectorAll('[data-interface]').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const interfaceName = tab.dataset.interface;
+    document.querySelectorAll('[data-interface]').forEach(button=>button.classList.toggle('active', button === tab));
+    document.querySelectorAll('.interface-workspace').forEach(workspace=>workspace.classList.toggle('active', workspace.id === interfaceName + 'Workspace'));
+    document.querySelector('.topbar h1').textContent = interfaceName === 'operator' ? 'Operator control centre' : 'Post-scan charging experience';
+    document.querySelector('.topbar p').textContent = interfaceName === 'operator'
+      ? 'Monitor charging sessions and handle Flow escalations with complete session context.'
+      : 'Example of what a Flow driver could see after scanning a participating charger.';
+  });
+});
+
+const screens = {
+  scan: document.getElementById('scanScreen'),
+  charging: document.getElementById('chargingScreen'),
+  issue: document.getElementById('chargingScreen'),
+  chat: document.getElementById('chatScreen'),
+  call: document.getElementById('callScreen')
+};
+
+let chargingTimer = null;
+let seconds = 0;
+let issueActive = false;
+
+function showScreen(name){
+  Object.values(screens).forEach(s=>s.classList.add('hidden'));
+  screens[name].classList.remove('hidden');
+
+  document.querySelectorAll('.nav-btn,.step-tab').forEach(b=>{
+    b.classList.toggle('active', b.dataset.go === name);
+  });
+
+  if(name === 'issue'){
+    activateIssue();
+  }
+}
+
+document.querySelectorAll('[data-go]').forEach(btn=>{
+  btn.addEventListener('click',()=>showScreen(btn.dataset.go));
+});
+
+document.getElementById('startChargingBtn').addEventListener('click',()=>{
+  showScreen('charging');
+  startChargingSimulation();
+});
+
+function startChargingSimulation(){
+  clearInterval(chargingTimer);
+  seconds = 0;
+  issueActive = false;
+
+  document.getElementById('issueBanner').classList.remove('show');
+  document.getElementById('simulateIssueBtn').classList.remove('hidden');
+  document.getElementById('liveStatus').innerHTML = '<span class="live-dot"></span> Charging normally';
+  document.getElementById('liveStatus').style.background = 'var(--success-bg)';
+  document.getElementById('liveStatus').style.color = 'var(--success)';
+  document.getElementById('chargeBadge').textContent = 'Live';
+  document.getElementById('chargeBadge').className = 'badge ok';
+
+  chargingTimer = setInterval(()=>{
+    if(issueActive) return;
+
+    seconds += 1;
+    const energy = 18.4 + seconds * 0.04;
+    const cost = energy * 0.65;
+    const battery = Math.min(79,67 + Math.floor(seconds/3));
+    const mins = 24 + Math.floor(seconds/4);
+
+    document.getElementById('energyValue').textContent = energy.toFixed(1) + ' kWh';
+    document.getElementById('costValue').textContent = '$' + cost.toFixed(2);
+    document.getElementById('batteryLevel').textContent = battery + '%';
+    document.getElementById('timeValue').textContent = mins + ' min';
+  },1000);
+}
+
+function activateIssue(){
+  issueActive = true;
+  clearInterval(chargingTimer);
+
+  document.getElementById('energyValue').textContent = '18.9 kWh';
+  document.getElementById('costValue').textContent = '$12.29';
+  document.getElementById('timeValue').textContent = '31 min';
+
+  const live = document.getElementById('liveStatus');
+  live.innerHTML = '⚠ Charging interrupted';
+  live.style.background = 'var(--danger-bg)';
+  live.style.color = 'var(--danger)';
+
+  const badge = document.getElementById('chargeBadge');
+  badge.textContent = 'Interrupted';
+  badge.className = 'badge bad';
+
+  document.getElementById('issueBanner').classList.add('show');
+  document.getElementById('simulateIssueBtn').classList.add('hidden');
+}
+
+document.getElementById('simulateIssueBtn').addEventListener('click',()=>{
+  activateIssue();
+
+  document.querySelectorAll('.step-tab').forEach(b=>{
+    b.classList.toggle('active', b.dataset.go === 'issue');
+  });
+});
+
+document.getElementById('stopSessionBtn').addEventListener('click',()=>{
+  clearInterval(chargingTimer);
+  alert('Demo: charging session stopped and final session record requested from the operator.');
+});
+
+function sendChat(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+
+  const messages = document.getElementById('messages');
+  const user = document.createElement('div');
+  user.className = 'bubble user';
+  user.textContent = text;
+  messages.appendChild(user);
+  input.value = '';
+
+  setTimeout(()=>{
+    const agent = document.createElement('div');
+    agent.className = 'bubble agent';
+    agent.textContent = 'Thanks. I have added that to the incident. Your charger, session and payment references remain attached, so I can escalate the same case to the operator without asking you to repeat everything.';
+    messages.appendChild(agent);
+    messages.scrollTop = messages.scrollHeight;
+  },450);
+}
+
+document.getElementById('sendChat').addEventListener('click',sendChat);
+document.getElementById('chatInput').addEventListener('keydown',e=>{
+  if(e.key === 'Enter') sendChat();
+});
+</script>
+</body>
+</html>
