@@ -51,9 +51,9 @@
     <section class="interface-workspace active" id="driverWorkspace">
     <div class="driver-workflow">
     <div class="stepper">
-      <button class="step-tab active" data-go="scan">Scan</button>
+      <button class="step-tab active" data-go="stations">Find stations</button>
+      <button class="step-tab" data-go="scan">Scan</button>
       <button class="step-tab" data-go="charging">Charge</button>
-      <button class="step-tab" data-go="issue">Issue</button>
       <button class="step-tab" data-go="chat">Support</button>
     </div>
 
@@ -62,8 +62,35 @@
         <div class="phone-frame">
           <div class="phone-screen">
 
+            <!-- STATION FINDER -->
+            <div class="screen" id="stationsScreen">
+              <div class="phone-status"><span>14:31</span><span>5G ◼︎ 84%</span></div>
+              <div class="mobile-head">
+                <div class="row">
+                  <div><h2>Find a charger</h2><p class="screen-subtitle">Available near Singapore</p></div>
+                  <button class="support-small">⌖ Use location</button>
+                </div>
+              </div>
+              <div class="mobile-content station-content">
+                <div class="station-search">⌕ <span>Search by location or destination</span></div>
+                <div class="map-card" aria-label="Map showing nearby charging stations">
+                  <div class="map-roads road-one"></div><div class="map-roads road-two"></div><div class="map-water"></div>
+                  <span class="map-label label-marina">Marina Bay</span><span class="map-label label-city">Downtown</span>
+                  <button class="map-pin pin-shell" data-go="scan">⚡</button><button class="map-pin pin-tesla">⚡</button><button class="map-pin pin-sp">⚡</button><button class="map-pin pin-flow">⌖</button>
+                  <div class="map-location"><span></span> You are here</div>
+                </div>
+                <div class="station-toolbar"><strong>12 stations nearby</strong><button>Filter</button></div>
+                <div class="brand-filters"><span class="selected">All brands</span><span>Shell</span><span>SP Group</span><span>Tesla</span></div>
+                <div class="station-list">
+                  <button class="station-item" data-go="scan"><span class="station-brand shell">SHELL</span><span class="station-info"><strong>Marina Bay • Port 04</strong><small>120 kW · CCS2 · 0.65/kWh</small></span><span class="station-state">Available</span></button>
+                  <button class="station-item"><span class="station-brand sp">SP</span><span class="station-info"><strong>Marina Boulevard</strong><small>150 kW · CCS2 · 0.58/kWh</small></span><span class="station-state">3 open</span></button>
+                  <button class="station-item"><span class="station-brand tesla">T</span><span class="station-info"><strong>Orchard Central</strong><small>250 kW · Tesla · 0.72/kWh</small></span><span class="station-state">Available</span></button>
+                </div>
+              </div>
+            </div>
+
             <!-- SCAN / CONFIRM -->
-            <div class="screen" id="scanScreen">
+            <div class="screen hidden" id="scanScreen">
               <div class="phone-status"><span>14:34</span><span>5G ◼︎ 82%</span></div>
               <div class="mobile-head">
                 <div class="row">

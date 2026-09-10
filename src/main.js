@@ -8,7 +8,7 @@ const SELECTORS = {
 const IDS = {
   operatorWorkspace: 'operatorPanel',
   driverWorkspace: 'driverWorkspace',
-  screens: { scan: 'scanScreen', charging: 'chargingScreen', chat: 'chatScreen', call: 'callScreen' },
+  screens: { stations: 'stationsScreen', scan: 'scanScreen', charging: 'chargingScreen', chat: 'chatScreen', call: 'callScreen' },
   controls: { startCharging: 'startChargingBtn', simulateIssue: 'simulateIssueBtn', stopSession: 'stopSessionBtn', sendChat: 'sendChat', chatInput: 'chatInput' },
   charging: { issueBanner: 'issueBanner', liveStatus: 'liveStatus', chargeBadge: 'chargeBadge', energy: 'energyValue', cost: 'costValue', battery: 'batteryLevel', duration: 'timeValue', messages: 'messages' },
 };
